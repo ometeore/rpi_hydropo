@@ -1,22 +1,29 @@
 import RPi.GPIO as GPIO 
 import time
 
-def motor_start():
+def water_start():
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     GPIO.setup(18,GPIO.OUT) 
     GPIO.output(18,True)
 
-def motor_stop():
+def water_stop():
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     GPIO.setup(18,GPIO.OUT)
     GPIO.output(18,False)
 
-def motor_time(duration):
-    motor_start()
-    time.sleep(duration)
-    motor_stop()
+def light_start():
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+    GPIO.setup(18,GPIO.OUT) 
+    GPIO.output(18,True)
+
+def light_stop():
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+    GPIO.setup(18,GPIO.OUT)
+    GPIO.output(18,False)
 
 
 def ph_start():

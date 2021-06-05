@@ -1,9 +1,7 @@
-import os.path
-import ast
+import os.path 
 import json
-from datetime import datetime, date, timedelta
+from datetime import datetime, timedelta
 from pathlib import Path
-#import pathlib
 
 class Use_file:
     """ la classe pour lire et écrire dans les settings  """
@@ -11,16 +9,14 @@ class Use_file:
     def __init__(self, name):
         self.path = Path('./files/' + name)
 
-    ##### revoir ast literal pourri le code
     def file_to_dict(self):
-        my_file = open(self.path, 'r')
-        dico = ast.literal_eval(my_file.read())
-        my_file.close()
-        return dico
+        with open(self.path, 'r') as file:
+            notes = json.load(file)
+        return notes
 
     def write_dico(self, dico):
         my_file = open(self.path, 'w')
-        my_file.write(dico)
+        my_file.write(json.dumps(dico))
         my_file.close()
 
     def find_task(self):
@@ -45,7 +41,7 @@ class Use_file:
             temp2['timetable'] = datetime.strptime(schedule[1], '%H:%M:%S')
             result.extend([temp1, temp2])
             temp1, temp2 = {}, {}
-        
+
         for schedule in schedule_light_list:
 
             temp1['type'], temp2['type'] = 'light', 'light'
@@ -60,8 +56,8 @@ class Use_file:
 
         for elm in result:
             timedelta_elm = timedelta(hours=elm['timetable'].hour, minutes=elm['timetable'].minute)
-            
+
             if timedelta_elm == timedelta_now:
                 final_array.append(elm)
-
+        print(final_array)
         return final_array

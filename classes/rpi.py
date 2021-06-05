@@ -4,8 +4,9 @@ import json
 import pprint
 import threading
 from datetime import datetime
-from classes.use_file import Use_file
-
+from classes.use_file import Use_file 
+# import only in production check down this file to un comment more in production
+#import classes.hardware 
 
 
 class Rpi:
@@ -20,13 +21,20 @@ class Rpi:
         self.water = False
         self.light = False
 
+
+    ##################### externaliser l'adresse serveur dans une variable dans settings
+
     def ecoute(self):
         """ la rpi est en attente d'un message du serveur
         les fonctions qui regissent les messages sont dans
         websocket_func"""
+
+        my_file = Use_file("settings.txt")
+        dict_settings = my_file.file_to_dict()
+
         ws = MyWebSocketApp(
                             self,
-                            "ws://127.0.0.1:8000/ws/",
+                            dict_settings['url'],
                             on_message = on_message,
                             on_error = on_error,
                             on_close = on_close
@@ -47,7 +55,7 @@ def on_open(ws):
     def run(*args):
         print("#############################\nWorking")
         while True:
-            nominal(ws.rpi)
+            nominal()
             time.sleep(60)
 
         ws.close()
@@ -58,15 +66,18 @@ def on_open(ws):
 def on_message(ws, message):
     pp = pprint.PrettyPrinter(indent=4)
     dict_message = json.loads(message)
-    pp.pprint(dict_message['message']['message'])
     
     if dict_message['message']['message']['manual']:
-        print("On est dans le mode manuel")
-
+        print("######## MANUAL MODE ########")
+        ws.rpi.manual = True
+        task = {}
+        task['action'], task['type'] = 'on', dict_message['message']['message']['tool']
+        manual_mode(task)
+        time.sleep(300)
     else:
-        print("A recu une demande de modification du scheduleur")
+        print("######## SCHEDULE MODE ########")
         my_file = Use_file("schedule.txt")
-        my_file.write_dico(str(dict_message['message']['message']))
+        my_file.write_dico(dict_message['message']['message'])
 
 
 def on_error(ws, error):
@@ -77,7 +88,7 @@ def on_close(ws):
     print("### closed ###")
 
 
-def nominal(rpi):
+def nominal():
     """ Switch on or off sensors and motors if datetime is in schedule """
     my_file = Use_file("schedule.txt")
     next_task = my_file.find_task()
@@ -87,8 +98,38 @@ def nominal(rpi):
         print("no task at: {}:{}".format(time_now.hour, time_now.minute))
     else:
         for task in next_task:
+            print(task)
             get_task_done(task)
 
+def turn_everything_off():
+    pass
+
+
+
+
+def manual_mode(task):
+    turn_everything_off()
+    get_task_done(task)
 
 def get_task_done(task):
     pass
+
+    ############# UNCOMMENT THIS IN PRODUCTION (and the import)
+
+# def get_task_done(task):
+#     if task['type'] == 'water':
+#         if task['action'] == 'on':
+#             water_start()
+#         if task['action'] == 'off':
+#             water_stop()
+#     if task['type'] == 'light':
+#         if task['action'] == 'on':
+#             light_start()
+#         if task['action'] == 'off':
+#             light_stop()
+
+# def turn_everything_off():
+#     water_stop()
+#     light_stop()
+#     conduct_stop()
+#     ph_stop()

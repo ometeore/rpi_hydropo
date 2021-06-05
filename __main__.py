@@ -5,9 +5,7 @@ import threading
 ### thread1: ecoute sur le channel ws et écris les modifs demandé sur schedule.txt
 ### thread2: nominal lance les moteurs et light aux horaires souhaités
 
-
 keep_going = True
-
 
 while keep_going:
     rpi = Rpi()
