@@ -67,6 +67,8 @@ def on_message(ws, message):
     pp = pprint.PrettyPrinter(indent=4)
     dict_message = json.loads(message)
     
+    #############"""" HMMMMMMmmmmm Ca marche ca???
+
     if dict_message['message']['message']['manual']:
         print("######## MANUAL MODE ########")
         ws.rpi.manual = True
@@ -98,14 +100,10 @@ def nominal():
         print("no task at: {}:{}".format(time_now.hour, time_now.minute))
     else:
         for task in next_task:
-            print(task)
             get_task_done(task)
 
 def turn_everything_off():
     pass
-
-
-
 
 def manual_mode(task):
     turn_everything_off()

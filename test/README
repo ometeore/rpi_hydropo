@@ -1,0 +1,8 @@
+
+There is a problem with python and the PYTHONPATH to run the test with the good PYTHONPATH run:
+
+			python -m pytest -v test/
+
+TO LEARN MORE:
+
+			https://stackoverflow.com/questions/10253826/path-issue-with-pytest-importerror-no-module-named-yadayadayada

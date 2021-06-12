@@ -3,7 +3,7 @@ import io
 import datetime
 from freezegun import freeze_time
 from unittest.mock import mock_open, patch, MagicMock, PropertyMock
-from rpi_hydropo.classes.use_file import Use_file
+from classes.use_file import Use_file
 
 
 # def Mock_file(self):
@@ -24,13 +24,12 @@ def test_file_to_dict():
 
 
 @freeze_time("2012-01-14 13:00:00")
-def test_find_task(monkeypatch):
+def test_find_task():
     """ 1 mock file_to_dict to get a dict of schedule
         2 mock a datetime (we use freezgun module here)
         3 check if return list of task(s)
         NB: example of task is : {'type': 'water', 'action': 'off', 'timetable': datetime.datetime(1900, 1, 1, 15, 21)}
     """
-    # 1
     fake_schedule = {"water": [["13:03:00", "13:00:00"]], "lights": [["13:09:00", "13:10:00"]]}
     my_file = Use_file('my_file.txt')
     my_file.file_to_dict = MagicMock(return_value=fake_schedule)
@@ -51,5 +50,3 @@ def test_write_dico(tmpdir):
     #     mock_my_property.return_value = my_temp_file_path
     #     my_file = Use_file("txt")
     #     print(my_file.path)
-
-
