@@ -15,11 +15,12 @@ class Rpi:
     def __init__(self):
         """ init la raspberry avec la config GPIO des settings
          et les valeurs des schedule"""
+        self.is_connect = False
         self.manual = False
-        self.ph = False
-        self.ec = False
-        self.water = False
-        self.light = False
+        self.ph_motor = False
+        self.ec_motor = False
+        self.water_motor = False
+        self.light_motor = False
 
 
     ##################### externaliser l'adresse serveur dans une variable dans settings
@@ -52,10 +53,13 @@ class MyWebSocketApp(websocket.WebSocketApp):
 
 
 def on_open(ws):
+    ws.rpi.is_connect = True
     def run(*args):
         print("#############################\nWorking")
         while True:
             nominal()
+            if not ws.rpi.is_connect:
+                break
             time.sleep(60)
 
         ws.close()
@@ -66,18 +70,16 @@ def on_open(ws):
 def on_message(ws, message):
     pp = pprint.PrettyPrinter(indent=4)
     dict_message = json.loads(message)
-    
-    #############"""" HMMMMMMmmmmm Ca marche ca???
 
     if dict_message['message']['message']['manual']:
-        print("######## MANUAL MODE ########")
+        print("User start manual mode")
         ws.rpi.manual = True
         task = {}
         task['action'], task['type'] = 'on', dict_message['message']['message']['tool']
         manual_mode(task)
         time.sleep(300)
     else:
-        print("######## SCHEDULE MODE ########")
+        print("Back in schedule mode")
         my_file = Use_file("schedule.txt")
         my_file.write_dico(dict_message['message']['message'])
 
@@ -86,7 +88,7 @@ def on_error(ws, error):
     print(error)
 
 def on_close(ws):
-    print(datetime.now())
+    ws.rpi.is_connect = False
     print("### closed ###")
 
 

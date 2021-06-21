@@ -19,6 +19,8 @@ class Use_file:
         my_file.write(json.dumps(dico))
         my_file.close()
 
+    #### plutot que now  = task --> begin < now < fin
+
     def find_task(self):
         """ va recuperer les prochains horaire dans le fichier retourne l'heure 
         la tache et l'action (on/off)"""
@@ -59,5 +61,4 @@ class Use_file:
 
             if timedelta_elm == timedelta_now:
                 final_array.append(elm)
-        print(final_array)
         return final_array
