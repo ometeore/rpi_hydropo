@@ -4,9 +4,10 @@ import json
 import pprint
 import threading
 from datetime import datetime
-from classes.use_file import Use_file 
+from classes.use_file import Use_file
 # import only in production check down this file to un comment more in production
-#import classes.hardware 
+from classes.hardware import ph_mesure, ec_mesure
+
 
 
 class Rpi:
@@ -55,12 +56,20 @@ class MyWebSocketApp(websocket.WebSocketApp):
 def on_open(ws):
     ws.rpi.is_connect = True
     def run(*args):
+        i = 4
         print("#############################\nWorking")
         while True:
+            i = i + 1
             nominal()
+            message = {"i": i}
             if not ws.rpi.is_connect:
                 break
-            time.sleep(60)
+            # cad every 5 minutes if time sleep 60 at end of while
+            #if i == 5:
+            json_message = json.dumps(send_status())
+            ws.send(json_message)
+            #i = 0
+            time.sleep(6)
 
         ws.close()
         print("thread terminating...")
@@ -103,6 +112,21 @@ def nominal():
     else:
         for task in next_task:
             get_task_done(task)
+
+def send_status():
+    """ get ph and ec from hardware and prepare a message to send"""
+
+    my_file = Use_file("settings.txt")
+    dict_settings = my_file.file_to_dict()
+
+    message_to_send = {}
+    message_to_send["rpi_name"] = dict_settings['rpi_name']
+    message_to_send["ph"] = ph_mesure()
+    message_to_send["ec"] = ec_mesure()
+
+    print(message_to_send)
+
+    return message_to_send
 
 def turn_everything_off():
     pass

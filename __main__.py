@@ -18,4 +18,4 @@ while user_keep_going:
         except socket_error as err:
             print("cant access to server due to error:" + err)
         nominal()
-        time.sleep(60)
+        time.sleep(6)
