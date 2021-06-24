@@ -12,37 +12,43 @@ from classes.use_file import Use_file
 #             self.mode = 'w'
 #     return Test()
 
+
 def test_file_to_dict():
     """get the file of name self.path (self is frome Usefile object) and return the json inside"""
-    #recupere le fichier et retourne un objet dict
+    # recupere le fichier et retourne un objet dict
     # patch with open et return un type dict (ou json maybe)
-    with patch('builtins.open', mock_open(read_data='{"manual": false}')):
-        test = Use_file('my_file.txt')
+    with patch("builtins.open", mock_open(read_data='{"manual": false}')):
+        test = Use_file("my_file.txt")
         test_dict = test.file_to_dict()
         assert type(test_dict) is dict
-        assert test_dict['manual'] == False
+        assert test_dict["manual"] == False
 
 
 @freeze_time("2012-01-14 13:00:00")
 def test_find_task():
-    """ 1 mock file_to_dict to get a dict of schedule
-        2 mock a datetime (we use freezgun module here)
-        3 check if return list of task(s)
-        NB: example of task is : {'type': 'water', 'action': 'off', 'timetable': datetime.datetime(1900, 1, 1, 15, 21)}
+    """1 mock file_to_dict to get a dict of schedule
+    2 mock a datetime (we use freezgun module here)
+    3 check if return list of task(s)
+    NB: example of task is : {'type': 'water', 'action': 'off', 'timetable': datetime.datetime(1900, 1, 1, 15, 21)}
     """
-    fake_schedule = {"water": [["13:03:00", "13:00:00"]], "lights": [["13:09:00", "13:10:00"]]}
-    my_file = Use_file('my_file.txt')
+    fake_schedule = {
+        "water": [["13:03:00", "13:00:00"]],
+        "lights": [["13:09:00", "13:10:00"]],
+    }
+    my_file = Use_file("my_file.txt")
     my_file.file_to_dict = MagicMock(return_value=fake_schedule)
     result_array = my_file.find_task()
-    assert result_array[0]['type'] == "water"
+    assert result_array[0]["type"] == "water"
     assert len(result_array) == 1
+
 
 class MockFile:
     def open(self, *args, **kwargs):
         return io.StringIO()
 
+
 def test_write_dico(tmpdir):
-    """ write a python dict inside and file deleting what was previously inside"""
+    """write a python dict inside and file deleting what was previously inside"""
     pass
     # my_temp_file_path = tmpdir.join('output.txt')
 
