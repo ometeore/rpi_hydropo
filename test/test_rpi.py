@@ -56,8 +56,6 @@ def test_manual_mode(turn_off, get_task):
     turn_off.assert_called_once()
 
 
-
-
 ##########  DONT WORK, DONT KNOW WHY, it s the same as above...
 
 
