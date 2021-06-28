@@ -58,7 +58,7 @@ def test_manual_mode(turn_off, get_task):
 
 
 
-########## DONT KNOW WHY the same as above
+##########  DONT WORK, DONT KNOW WHY, it s the same as above...
 
 
 @mock.patch.object(demo, "water_stop")
@@ -77,8 +77,9 @@ def test_turn_everything_off(water_stop):
 
 
 def test_send_status():
-    fake_dict = {"type": "water", "action": "off"}
+    fake_dict = {"rpi_name": "name_rpi"}
     with patch.object(Use_file, "file_to_dict", return_value=fake_dict):
+        with patch 
         test_result = rpi.send_status()
         assert test_result == "blyat"
 
