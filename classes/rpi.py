@@ -6,7 +6,7 @@ import threading
 from datetime import datetime
 from classes.use_file import Use_file
 
-import classes.demonstration
+from classes.demonstration import *
 
 
 class Rpi:
@@ -106,7 +106,6 @@ def on_close(ws):
     ws.rpi.is_connect = False
     print("### closed ###")
 
-
 def nominal():
     """Switch on or off sensors and motors if datetime is in schedule"""
     my_file = Use_file("schedule.txt")
@@ -125,20 +124,12 @@ def send_status():
 
     my_file = Use_file("settings.txt")
     dict_settings = my_file.file_to_dict()
-
     message_to_send = {}
     message_to_send["rpi_name"] = dict_settings["rpi_name"]
     message_to_send["ph"] = ph_mesure()
     message_to_send["ec"] = ec_mesure()
-
     print(message_to_send)
-
     return message_to_send
-
-
-def turn_everything_off():
-    pass
-
 
 def manual_mode(task):
     turn_everything_off()
