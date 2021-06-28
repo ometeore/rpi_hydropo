@@ -75,11 +75,12 @@ def test_turn_everything_off(water_stop):
 
 
 
-
+@mock.patch.object(rpi, "get_task_done")
+@mock.patch.object(rpi, "turn_everything_off")
 def test_send_status():
     fake_dict = {"rpi_name": "name_rpi"}
     with patch.object(Use_file, "file_to_dict", return_value=fake_dict):
-        with patch 
+        #with patch 
         test_result = rpi.send_status()
         assert test_result == "blyat"
 

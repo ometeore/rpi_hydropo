@@ -1,14 +1,9 @@
 language: python
 python:
- - '3.8.5'
+ - '3.8'
 
-before_script:
+install:
  - pip install -r requirements.txt
 
-#env: DJANGO_SETTINGS_MODULE="application.settings.travis"
-
-#services:
-# - postgresql
-
 script:
- - pytest -v
+ - pytest
