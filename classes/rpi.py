@@ -128,7 +128,7 @@ def send_status():
     message_to_send["rpi_name"] = dict_settings["rpi_name"]
     message_to_send["ph"] = ph_mesure()
     message_to_send["ec"] = ec_mesure()
-    print(message_to_send)
+    print("SENDING STATUS: {}".format(str(message_to_send)))
     return message_to_send
 
 def manual_mode(task):
@@ -156,3 +156,20 @@ def turn_everything_off():
     light_stop()
     conduct_stop()
     ph_stop()
+
+
+############ HERE FOR THE TEST, I DONT WANT TO MOCK ALL GPIO BUT I WOULD RATHER MAKE FALSE HARDWARE METHOD IN DEMO 
+## WIHCH IS NOT A FILE NEEDED IN PROD 
+############ NEED TO SOLVE THIS TEST ISSUE BUT LATER I GUESS
+
+def water_stop():
+    pass
+
+def light_stop():
+    pass
+
+def ph_stop():
+    pass
+
+def conduct_stop():
+    pass

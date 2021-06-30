@@ -1,9 +1,9 @@
 from unittest import mock
 from freezegun import freeze_time
-from unittest.mock import patch, MagicMock, PropertyMock
+from unittest.mock import patch, MagicMock, PropertyMock, Mock
 from classes.use_file import Use_file
 from classes import rpi
-from classes import demonstration as demo
+from classes import demonstration
 
 import json
 
@@ -55,49 +55,25 @@ def test_manual_mode(turn_off, get_task):
     get_task.assert_called_once_with({"type": "water", "action": "off"})
     turn_off.assert_called_once()
 
+@mock.patch.object(demonstration, "ph_mesure")
+def test_send_status(ph):
+    fake_dict = {"rpi_name": "name_rpi", "ph": 7, "ec": 1500}
+    with patch.object(Use_file, "file_to_dict", return_value=fake_dict):
+        test_result = rpi.send_status()
+        assert test_result["rpi_name"] == "name_rpi"
+        assert 6 < test_result["ph"] < 8
+        assert 1470 <= test_result["ec"] <= 1530
 
-##########  DONT WORK, DONT KNOW WHY, it s the same as above...
+@mock.patch.object(rpi, "water_stop")
+@mock.patch.object(rpi, "light_stop")
+def test_get_task_done(light, water):
+    task1 = {"type" : "water", "action" : "off"}
+    task2 = {"type" : "light", "action" : "off"}
+    rpi.get_task_done(task1)
+    water.assert_called_once()
+    rpi.get_task_done(task2)
+    light.assert_called_once()
 
-
-# @mock.patch.object(demo, "water_stop")
-# def test_turn_everything_off(water_stop):
-#     rpi.turn_everything_off()
-#     water_stop.assert_called_once()
-    
-
-# def turn_everything_off():
-#     water_stop()
-#     light_stop()
-#     conduct_stop()
-#     ph_stop()
-
-
-
-# @mock.patch.object(rpi, "get_task_done")
-# @mock.patch.object(rpi, "turn_everything_off")
-# def test_send_status():
-#     fake_dict = {"rpi_name": "name_rpi"}
-#     with patch.object(Use_file, "file_to_dict", return_value=fake_dict):
-#         #with patch 
-#         test_result = rpi.send_status()
-#         assert test_result == "blyat"
-
-# def send_status():
-#     """get ph and ec from hardware and prepare a message to send"""
-
-#     my_file = Use_file("settings.txt")
-#     dict_settings = my_file.file_to_dict()
-
-#     message_to_send = {}
-#     message_to_send["rpi_name"] = dict_settings["rpi_name"]
-#     message_to_send["ph"] = ph_mesure()
-#     message_to_send["ec"] = ec_mesure()
-
-#     print(message_to_send)
-#     return message_to_send
-
-def test_get_task_done():
-    pass
 
 # def get_task_done(task):
 #     if task['type'] == 'water':
@@ -114,3 +90,29 @@ def test_get_task_done():
 #         if task['action'] == 'off':
 #             light_stop()
 #             led_yellow_stop()
+
+
+
+
+##########  IT WORK HERE BUT HAVE TO PUT MY FALSE MOCK IN RPI, SEEM IT CAN T IMPORT PROPERLY
+##########  DONT WORK, DONT KNOW WHY, it s the same as above...
+
+@mock.patch.object(rpi, "water_stop")
+@mock.patch.object(rpi, "light_stop")
+@mock.patch.object(rpi, "conduct_stop")
+@mock.patch.object(rpi, "ph_stop")
+
+def test_turn_everything_off(ph_stop, conduct_stop, light_stop,water_stop):
+    # mock_water_start = Mock(spec=demonstration.water_stop, return_value=None)
+    # rpi.turn_everything_off()
+    # mock_water_start.assert_called_once()
+
+    # with patch('demonstration.water_stop', return_value="None") as water_stop:
+    #     rpi.turn_everything_off()
+    #     water_stop.assert_called_once()
+
+    rpi.turn_everything_off()
+    water_stop.assert_called_once()
+    ph_stop.assert_called_once()
+    conduct_stop.assert_called_once()
+    light_stop.assert_called_once()
